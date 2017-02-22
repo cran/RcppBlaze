@@ -1,11 +1,11 @@
-b42bd7213f6eafa20f6f3413822dab40 *DESCRIPTION
+777ef0f7a66e22fbbacaf5c40f569de1 *DESCRIPTION
 c27e75b9b5f12a73d952b5b22c39d723 *NAMESPACE
 cceac27eb59a618402380915cab8f8e2 *NEWS.md
-7aba835306cf95e770f9b6565975a2de *R/RcppBlaze-package.R
+f84072b11680059eda469365ef57551e *R/RcppBlaze-package.R
 2e85a390df4b95ae14d7dcc36696a380 *R/RcppBlaze.package.skeleton.R
 b734d6553251fbc96e5732c1e005b9d7 *R/RcppExports.R
 473139875d827d50a6126554cc6695ce *R/flags.R
-c65e1f1d3025c622cb565939396c694e *README.md
+2674fdaa4d9c980e90daf398c57e4db6 *README.md
 6c7566aa8fc52f1de4aa5b36ebaf1d88 *inst/examples/lmBenchmark.R
 7e0f2053707ab7c34f628fc1f43047c6 *inst/include/RcppBlaze.h
 a11b28c49ecef994f707bd3cf191b54c *inst/include/RcppBlazeAs.h
@@ -912,7 +912,7 @@ ebd3a511a47b0486555c8971d5e7402a *inst/include/blaze/util/EnableIf.h
 885b7ef0601aa1843dde37de12cbb985 *inst/include/blaze/util/Limits.h
 92de8f9a8068534e9b5c90659d2a41f0 *inst/include/blaze/util/Logging.h
 662040d3eaec3de11911e3ca94fb9da6 *inst/include/blaze/util/MPL.h
-b72c1560b86e270524ff219abd3cf95a *inst/include/blaze/util/Memory.h
+52435793b4635132d8eac9be6200b8ef *inst/include/blaze/util/Memory.h
 1ecc693f5ed0f83835e6951988f2c5e9 *inst/include/blaze/util/MemoryPool.h
 6dd12a4be1bcb2f31b0b674961550ad3 *inst/include/blaze/util/Misalignment.h
 2d56a140fa3f138c477884383e866448 *inst/include/blaze/util/NonCopyable.h
@@ -1118,7 +1118,7 @@ e81db994f9bac1c6b3062f10d022414b *inst/unitTests/cpp/test-adaptors.cpp
 56009657b1b9019517572232522512ea *inst/unitTests/rUnitTest-vectors.R
 ffbb069c011d08fb92fa10907ad00c0e *inst/unitTests/rUnitTest-views.R
 3a4c833ff75da4a0346faf08843259f0 *inst/unitTests/runTests.R
-dcb73fd77d5e68963e7c022da8a4710b *man/RcppBlaze-package.Rd
+3568a0afef82fc770376576f262a18fc *man/RcppBlaze-package.Rd
 5b75cf01cf4ece025c65a7b3ffd13049 *man/RcppBlaze.package.skeleton.Rd
 c40985f7f2812ab15fb0c5ae219a8396 *man/fastLmPure.Rd
 f05e3fda5dfd858edeed605e5ed56413 *src/Makevars
