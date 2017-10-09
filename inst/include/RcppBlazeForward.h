@@ -1,11 +1,11 @@
-// -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
-/* :tabSize=4:indentSize=4:noTabs=false:folding=explicit:collapseFolds=1: */
+// Copyright (C)  2010 - 2016  Dirk Eddelbuettel, Romain Francois and Douglas Bates
+// Copyright (C)  2011         Douglas Bates, Dirk Eddelbuettel and Romain Francois
+// Copyright (C)  2017         Chingchuan Chen
 //
-// RcppBlazeForward.h: Rcpp/Blaze glue
+// This file is based on RcppArmadillo and RcppEigen.
+// This file is part of RcppBlaze.
 //
 // Copyright (C)  2017 Chingchuan Chen
-//
-// This file is part of RcppBlaze.
 //
 // RcppBlaze is free software: you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -24,15 +24,28 @@
 #define RcppBlaze__RcppBlazeForward__h
 
 #include <RcppBlazeConfig.h>
+
+#ifndef STRICT_R_HEADERS
 #define STRICT_R_HEADERS
+#endif
+#ifndef R_NO_REMAP
 #define R_NO_REMAP
+#endif
+
 #include <Rinternals.h>
 #include <R_ext/Boolean.h>
 #include <Rcpp/XPtr.h>
-#include <RcppCommon.h>
 #include <Rconfig.h>
+
+#include <blaze/system/BLAS.h>
+#ifdef RCPPBLAZE_USE_RCPPCBLAS
+#undef BLAZE_BLAS_MODE
+#define BLAZE_BLAS_MODE 1
+#undef BLAZE_BLAS_IS_PARALLEL
+#define BLAZE_BLAS_IS_PARALLEL 1
+#endif
+
 #include <blaze/Blaze.h>
-#include <blaze/system/Version.h>
 
 /* forward declarations */
 namespace Rcpp {
