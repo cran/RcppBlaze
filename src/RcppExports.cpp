@@ -22,14 +22,54 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// blaze_set_seed
+void blaze_set_seed(uint32_t seed);
+RcppExport SEXP _RcppBlaze_blaze_set_seed(SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< uint32_t >::type seed(seedSEXP);
+    blaze_set_seed(seed);
+    return R_NilValue;
+END_RCPP
+}
+// blaze_get_seed
+uint32_t blaze_get_seed();
+RcppExport SEXP _RcppBlaze_blaze_get_seed() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(blaze_get_seed());
+    return rcpp_result_gen;
+END_RCPP
+}
+// blaze_set_num_threads
+void blaze_set_num_threads(size_t n);
+RcppExport SEXP _RcppBlaze_blaze_set_num_threads(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< size_t >::type n(nSEXP);
+    blaze_set_num_threads(n);
+    return R_NilValue;
+END_RCPP
+}
+// blaze_get_num_threads
+size_t blaze_get_num_threads();
+RcppExport SEXP _RcppBlaze_blaze_get_num_threads() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(blaze_get_num_threads());
+    return rcpp_result_gen;
+END_RCPP
+}
 // fastLmPure
-Rcpp::List fastLmPure(blaze::DynamicMatrix<double> X, blaze::DynamicVector<double> y, int type);
+Rcpp::List fastLmPure(Rcpp::NumericMatrix X, Rcpp::NumericVector y, int type);
 RcppExport SEXP _RcppBlaze_fastLmPure(SEXP XSEXP, SEXP ySEXP, SEXP typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< blaze::DynamicMatrix<double> >::type X(XSEXP);
-    Rcpp::traits::input_parameter< blaze::DynamicVector<double> >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< int >::type type(typeSEXP);
     rcpp_result_gen = Rcpp::wrap(fastLmPure(X, y, type));
     return rcpp_result_gen;

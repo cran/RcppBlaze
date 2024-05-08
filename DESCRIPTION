@@ -2,7 +2,7 @@ Package: RcppBlaze
 Type: Package
 Title: 'Rcpp' Integration for the 'Blaze' High-Performance 'C++' Math
         Library
-Version: 1.0.0
+Version: 1.0.1
 Date: 2024-04-27
 Authors@R: c(
    person(given = "Ching-Chuan",
@@ -28,17 +28,17 @@ Description: Blaze is an open-source, high-performance 'C++' math library for de
 Depends: R (>= 4.2.0)
 Imports: Rcpp (>= 1.0.0), Matrix (>= 1.5-0)
 LinkingTo: Rcpp
-Suggests: MatrixExtra, microbenchmark, tinytest, pkgKitten
+Suggests: MatrixExtra, tinytest, microbenchmark
 LazyLoad: yes
 Encoding: UTF-8
 License: BSD_3_clause + file LICENSE
 RoxygenNote: 7.3.1
 NeedsCompilation: yes
-Packaged: 2024-04-30 12:06:16 UTC; root
+Packaged: 2024-05-06 15:03:27 UTC; root
 Author: Ching-Chuan Chen [aut, cre, ctr]
     (<https://orcid.org/0009-0007-8273-3206>),
   Klaus Iglberger [aut] (blaze),
   Georg Georg [aut] (blaze),
   Tobias Scharpff [aut] (blaze)
 Repository: CRAN
-Date/Publication: 2024-05-02 13:12:42 UTC
+Date/Publication: 2024-05-08 12:50:07 UTC

@@ -11,85 +11,100 @@
 // If not, see https://opensource.org/license/BSD-3-Clause.
 
 #include <RcppBlaze.h>
+#if BLAZE_OPENMP_PARALLEL_MODE
+#include <omp.h>
+#endif
+
 using Rcpp::_;
 
-enum {QRSolverType = 0, LDLTSolverType, LLTSolverType};
+typedef typename blaze::CustomVector<double, blaze::aligned, blaze::padded> BlazeDblCuVector;
+typedef typename blaze::CustomMatrix<double, blaze::aligned, blaze::padded, blaze::columnMajor> BlazeDblCuMatrix;
 
-Rcpp::List QRsolver(const blaze::DynamicMatrix<double>& X, const blaze::DynamicVector<double>& y) {
-  blaze::DynamicMatrix<double> Q;
-  blaze::DynamicMatrix<double> R;
-  qr(X, Q, R);
+#define INIT_VEC(__var__, __data__, __size__, __padded_size__)                                     \
+std::unique_ptr<double[], blaze::Deallocate> __data__( blaze::allocate<double>(__padded_size__) ); \
+BlazeDblCuVector __var__ ( __data__.get(), __size__, __padded_size__ );\
 
-  blaze::DynamicMatrix<double> S(R);
-  blaze::invert(S);
-  blaze::DynamicVector<double> coef(S * blaze::trans(Q) * y);
+#define INIT_MAT(__var__, __data__, __rows__, __cols__, __padded__)                                      \
+std::unique_ptr<double[], blaze::Deallocate> __data__( blaze::allocate<double>(__padded__ * __cols__) ); \
+BlazeDblCuMatrix __var__ ( __data__.get(), __rows__, __cols__, __padded__ );
 
-  blaze::DynamicVector<double> fitted = X * coef;
-  blaze::DynamicVector<double> resid  = y - fitted;
-  double s = std::sqrt((resid, resid ) / ((double) X.rows() - (double) R.rows()));
+enum {QRSolverType = 0, LDLTSolverType, LLTSolverType, LUSolverType};
 
-  blaze::DynamicVector<double> se(S.rows());
-  for (size_t i=0UL; i<S.rows(); ++i) {
-    se[i] = std::sqrt((row(S, i), row(S, i))) * s;
+Rcpp::List QRsolver(const BlazeDblCuMatrix& X, const BlazeDblCuVector& y, size_t n_padded, size_t p_padded) {
+  const size_t n = X.rows(), p = X.columns();
+
+  INIT_MAT(Q, q_data, n, p, n_padded);
+  INIT_MAT(R, r_data, p, p, p_padded);
+  blaze::qr(X, Q, R);
+
+  const size_t rank = R.rows();
+  INIT_VEC(coef, coef_data, p, p_padded);
+  INIT_VEC(fitted, fitted_data, n, n_padded);
+  INIT_VEC(resid, resid_data, n, n_padded);
+  INIT_VEC(se, se_data, p, p_padded);
+
+  blaze::invert(R);
+  coef = R * blaze::trans(Q) * y;
+  fitted = X * coef;
+  resid = y - fitted;
+  double s = std::sqrt(blaze::dot(resid, resid) / ((double) (n-rank)));
+  #pragma omp parallel for
+  for (size_t i=0UL; i<p; ++i) {
+    se[i] = std::sqrt(blaze::dot(row(R, i), row(R, i))) * s;
   }
 
   return Rcpp::List::create(
     _["coefficients"]  = coef,
     _["se"]            = se,
-    _["rank"]          = (unsigned int) R.rows(),
-    _["df.residual"]   = (unsigned int) X.rows() - (unsigned int) R.rows(),
+    _["rank"]          = (int)rank,
+    _["df.residual"]   = (int)(n-rank),
     _["residuals"]     = resid,
     _["s"]             = s,
     _["fitted.values"] = fitted
   );
 }
 
-Rcpp::List LDLTSolver(const blaze::DynamicMatrix<double>& X, const blaze::DynamicVector<double>& y) {
-  blaze::DynamicMatrix<double> XTXinv(blaze::trans(X) * X);
-  blaze::invert<blaze::byLDLT>(XTXinv);
+Rcpp::List InvertSolver(
+    const BlazeDblCuMatrix& X,
+    const BlazeDblCuVector& y,
+    size_t n_padded,
+    size_t p_padded,
+    int lmSolverType
+) {
+  const size_t n = X.rows(), p = X.columns();
+  INIT_MAT(XTXinv, xtx_data, p, p, p_padded);
 
-  blaze::DynamicVector<double> coef(XTXinv * blaze::trans(X) * y);
-
-  blaze::DynamicVector<double> fitted = X * coef;
-  blaze::DynamicVector<double> resid  = y - fitted;
-  double s = std::sqrt((resid, resid) / ((double) X.rows() - (double) XTXinv.columns()));
-
-  blaze::DynamicVector<double> se(XTXinv.columns());
-  for (size_t i=0UL; i<XTXinv.columns(); ++i) {
-    se[i] = std::sqrt( XTXinv(i, i) ) * s;
+  XTXinv = blaze::trans(X) * X;
+  switch (lmSolverType) {
+  case LDLTSolverType:
+    blaze::invert<blaze::byLDLT>(XTXinv);
+    break;
+  case LLTSolverType:
+    blaze::invert<blaze::byLLH>(XTXinv);
+    break;
+  case LUSolverType:
+    blaze::invert<blaze::byLU>(XTXinv);
+    break;
+  default:
+    Rcpp::stop("No such solver type!");
   }
+
+  INIT_VEC(coef, coef_data, p, p_padded);
+  INIT_VEC(fitted, fitted_data, n, n_padded);
+  INIT_VEC(resid, resid_data, n, n_padded);
+  INIT_VEC(se, se_data, p, p_padded);
+
+  coef = XTXinv * blaze::trans(X) * y;
+  fitted = X * coef;
+  resid = y - fitted;
+  double s = std::sqrt(blaze::dot(resid, resid) / ((double) (n-p)));
+  se = blaze::diagonal(XTXinv) * s;
 
   return Rcpp::List::create(
     _["coefficients"]  = coef,
     _["se"]            = se,
-    _["rank"]          = (unsigned int) XTXinv.columns(),
-    _["df.residual"]   = (unsigned int) X.rows() - (unsigned int) XTXinv.columns(),
-    _["residuals"]     = resid,
-    _["s"]             = s,
-    _["fitted.values"] = fitted
-  );
-}
-
-Rcpp::List LLTSolver(const blaze::DynamicMatrix<double>& X, const blaze::DynamicVector<double>& y) {
-  blaze::DynamicMatrix<double> XTXinv(blaze::trans(X) * X);
-  blaze::invert<blaze::byLLH>(XTXinv);
-
-  blaze::DynamicVector<double> coef(XTXinv * blaze::trans(X) * y);
-
-  blaze::DynamicVector<double> fitted = X * coef;
-  blaze::DynamicVector<double> resid  = y - fitted;
-  double s = std::sqrt( ( resid, resid ) / ((double) X.rows() - (double) XTXinv.columns()));
-
-  blaze::DynamicVector<double> se(XTXinv.columns());
-  for (size_t i=0UL; i<XTXinv.columns(); ++i) {
-    se[i] = std::sqrt(XTXinv(i, i)) * s;
-  }
-
-  return Rcpp::List::create(
-    _["coefficients"]  = coef,
-    _["se"]            = se,
-    _["rank"]          = (unsigned int) XTXinv.columns(),
-    _["df.residual"]   = (unsigned int) X.rows() - (unsigned int) XTXinv.columns(),
+    _["rank"]          = (int) p,
+    _["df.residual"]   = (int) (n-p),
     _["residuals"]     = resid,
     _["s"]             = s,
     _["fitted.values"] = fitted
@@ -104,7 +119,7 @@ Rcpp::List LLTSolver(const blaze::DynamicMatrix<double>& X, const blaze::Dynamic
 //'
 //' @param X A model matrix.
 //' @param y A response vector.
-//' @param type A integer. 0 is QR solver, 1 is LLT solver and 2 is LDLT sovler.
+//' @param type A integer. 0 is QR solver, 1 is LDLT solver, 2 is LLT sovler and 3 is LU solver.
 //' @return A list containing coefficients, standard errors, rank of model matrix,
 //'   degree of freedom of residuals, residuals, the standard deviation of random errors and
 //'   fitted values.
@@ -115,19 +130,28 @@ Rcpp::List LLTSolver(const blaze::DynamicMatrix<double>& X, const blaze::Dynamic
 //' print(flm)
 //' @export
 // [[Rcpp::export]]
-Rcpp::List fastLmPure(blaze::DynamicMatrix<double> X, blaze::DynamicVector<double> y, int type) {
-  if (X.rows() != y.size()) {
+Rcpp::List fastLmPure(Rcpp::NumericMatrix X, Rcpp::NumericVector y, int type) {
+  if (X.nrow() != y.size()) {
     throw std::invalid_argument("size mismatch");
   }
 
+  // define sizes
+  const size_t n = (size_t) X.nrow(), p = (size_t) X.ncol();
+  const std::size_t n_padded = blaze::nextMultiple<std::size_t>(n, blaze::SIMDTrait<double>::size);
+  const std::size_t p_padded = blaze::nextMultiple<std::size_t>(p, blaze::SIMDTrait<double>::size);
+
+  // define y
+  INIT_VEC(y_, y_data, n, n_padded);
+  RcppBlaze::copyToCustomVector(y, y_);
+
+  // define x
+  INIT_MAT(x_, x_data, n, p, n_padded);
+  RcppBlaze::copyToCustomMatrix(X, x_);
+
   switch(type) {
     case QRSolverType:
-      return QRsolver(X, y);
-    case LLTSolverType:
-      return LLTSolver(X, y);
-    case LDLTSolverType:
-      return LDLTSolver(X, y);
+      return QRsolver(x_, y_, n_padded, p_padded);
     default:
-      throw std::invalid_argument("invalid type");
+      return InvertSolver(x_, y_, n_padded, p_padded, type);
   }
 }

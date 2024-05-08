@@ -6,15 +6,20 @@
 ## under the terms of the 3-Clause BSD License. You should have received
 ## a copy of 3-Clause BSD License along with RcppBlaze.
 ## If not, see https://opensource.org/license/BSD-3-Clause.
+suppressPackageStartupMessages({
+  require(Rcpp)
+  require(RcppBlaze)
+  require(Matrix)
+  require(MatrixExtra)
+  require(tinytest)
+})
 
 cppFile <- "test-vectors.cpp"
 if (file.exists(file.path("cpp", cppFile))) {
-  Rcpp::sourceCpp(file.path("cpp", cppFile))
+  sourceCpp(file.path("cpp", cppFile))
 } else {
-  Rcpp::sourceCpp(system.file("tinytest", "cpp", cppFile, package = "RcppBlaze"))
+  sourceCpp(system.file("tinytest", "cpp", cppFile, package = "RcppBlaze"))
 }
-library(Matrix)
-library(MatrixExtra)
 
 vector_wrap_res <- vector_wrap_test()
 expect_dbl_vec <- c(1.5, -2.5, 4.5)
@@ -45,9 +50,6 @@ expect_equal(vector_as_res[["sv_double_sum"]], expect_double_sum, info = "sv_dou
 expect_equal(vector_as_res[["sv_double_unaligned_sum"]], expect_double_sum, info = "sv_double_unaligned_sum")
 expect_equal(vector_as_res[["hv_double_sum"]], expect_double_sum, info = "hv_double_sum")
 expect_equal(vector_as_res[["hv_double_unaligned_sum"]], expect_double_sum, info = "hv_double_unaligned_sum")
-
-expect_error(vector_sv_error(c(1.5, 2.5, 4.5, 5.5)))
-expect_error(vector_hv_error(c(1.5, 2.5, 4.5, 5.5)))
 
 custom_vector_as_res <- custom_vector_as_test(list(c(1L, 3L, 6L), c(1.5, 2.5, 4.5)))
 expect_equal(custom_vector_as_res[["iCustomVectorUU"]], 10L, info = "iCustomVectorUU")

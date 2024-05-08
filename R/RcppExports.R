@@ -15,6 +15,39 @@ blaze_version <- function(single) {
     .Call(`_RcppBlaze_blaze_version`, single)
 }
 
+#' Set/Get the random number generator for blaze with given seed
+#'
+#' @param seed A positive integer to specify the seed value for the random number generator.
+#' @return No return value.
+#' @rdname blaze_seed
+#' @export
+blaze_set_seed <- function(seed) {
+    invisible(.Call(`_RcppBlaze_blaze_set_seed`, seed))
+}
+
+#' @rdname blaze_seed
+#' @export
+blaze_get_seed <- function() {
+    .Call(`_RcppBlaze_blaze_get_seed`)
+}
+
+#' Set/Get the Number of Threads used in blaze
+#'
+#' @param n The number of threads to set in blaze.
+#' @return \code{blaze_get_threads} returns an integer and \code{blaze_set_threads} returns nothing.
+#' @seealso blaze wiki: \url{https://bitbucket.org/blaze-lib/blaze/wiki/Shared\%20Memory\%20Parallelization}.
+#' @rdname blaze_threads
+#' @export
+blaze_set_num_threads <- function(n) {
+    invisible(.Call(`_RcppBlaze_blaze_set_num_threads`, n))
+}
+
+#' @rdname blaze_threads
+#' @export
+blaze_get_num_threads <- function() {
+    .Call(`_RcppBlaze_blaze_get_num_threads`)
+}
+
 #' linear model fitting function based on RcppBlaze
 #'
 #' \code{fastLmPure} provides the estimates of the linear model based on \strong{RcppBlaze}.
@@ -23,7 +56,7 @@ blaze_version <- function(single) {
 #'
 #' @param X A model matrix.
 #' @param y A response vector.
-#' @param type A integer. 0 is QR solver, 1 is LLT solver and 2 is LDLT sovler.
+#' @param type A integer. 0 is QR solver, 1 is LDLT solver, 2 is LLT sovler and 3 is LU solver.
 #' @return A list containing coefficients, standard errors, rank of model matrix,
 #'   degree of freedom of residuals, residuals, the standard deviation of random errors and
 #'   fitted values.
