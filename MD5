@@ -1,4 +1,4 @@
-8383a52636bec856a724c2ea8fc851f1 *DESCRIPTION
+3633c2fc0e27de53f01a9ab34089c968 *DESCRIPTION
 6fd01e124d1747479c6cf0b3f4788f50 *LICENSE
 a194fcfac8fc401fbd8e796f4f49ce43 *NAMESPACE
 5df999a69c73ee1a609a55ea05dc0ff6 *NEWS.md
@@ -6,12 +6,12 @@ a194fcfac8fc401fbd8e796f4f49ce43 *NAMESPACE
 378951b253b3e11b26bba5a1b7b4ae81 *R/RcppExports.R
 e97081ed3a12991525b41caace64df17 *R/flags.R
 42516490d001b099af414b115e7b8d4a *README.md
-b52aabe9a2757fc86742763db9dafc9b *build/partial.rdb
+f61db891eb928123aba4412ca322f508 *build/partial.rdb
 b5d4ca43c40c4d591f8c95404067f6a1 *inst/examples/lmBenchmark.R
 a3484a9b64feb75bdcb3a2381843afae *inst/include/RcppBlaze.h
 75df88cd4f96ec829d16b711ebc6730c *inst/include/RcppBlazeAs.h
 0e7f0d0a95ee800d10ab4ae36dfa12a4 *inst/include/RcppBlazeConfig.h
-f09e018439bf448f4797df8d5bb171d4 *inst/include/RcppBlazeForward.h
+eb53d5ec45327f56dd9abdf1f5220128 *inst/include/RcppBlazeForward.h
 7581cdb697fa0c227d47493a4e68c46d *inst/include/RcppBlazeWrap.h
 18794c23c411fbe210fbb5bb9be2026f *inst/include/blaze/Blaze.h
 5c02fdffccd6e20c0f591926c4a07bb7 *inst/include/blaze/Forward.h
@@ -1701,11 +1701,11 @@ ef6bbcff06ffb5dfe13f58ec6b7c1f60 *inst/tinytest/cpp/test-expr.cpp
 5c776b5ce9aeca5b052430ff319e086f *inst/tinytest/test_vector.R
 bb5009522a4cad8af2d947e9439a5db0 *inst/tinytest/test_views.R
 d8265beaa95826307526e32851042023 *man/RcppBlaze-package.Rd
-efa93d831e897dbf884720e3c0b7363a *man/blaze_seed.Rd
-9825047666d9d8418ccec976790f7dda *man/blaze_threads.Rd
-423d6004ba8f587ba370fc31ae6e6aaa *man/blaze_version.Rd
-82671fb3f0cd251263078ddf406797f8 *man/fastLmPure.Rd
-c7f3812c0c2b055fd327dca23c19fd57 *src/Makevars
+68cf33938d3b341b687ee40f9f55380d *man/blaze_seed.Rd
+7f2e15d27aaa2b25767354c33233e478 *man/blaze_threads.Rd
+6316a4f000097fa688f1ae94adc8eccc *man/blaze_version.Rd
+d075346a197966ebd50b9f68645177a7 *man/fastLmPure.Rd
+4e3364ea25292011b8c706f7d19a6d3d *src/Makevars
 e1eacb2b624cd4487072499f0390588b *src/RcppBlaze.cpp
 a3c0ad019b16d73f9a19893acd310497 *src/RcppExports.cpp
 66084a0af129076a8b5f7b58dabdc204 *src/fastLm.cpp
